@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import { LoaderCircle } from "lucide-react";
+import { Skeleton } from "./Skeleton";
 
 type IconId = "inbox" | "contacts" | "employees" | "workflows" | "campaigns";
 type LoadingPhase = "idle" | "loading" | "animating" | "loaded";
@@ -177,22 +178,22 @@ function HoneycombIcon({
 }
 
 function AssessmentDashboard({
+  loading = false,
   onOpenNextPage,
 }: {
+  loading?: boolean;
   onOpenNextPage?: () => void;
 }) {
   const [dashboardReady, setDashboardReady] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState<IconId>("inbox");
   const [loadingPhases, setLoadingPhases] = useState<PhaseStore>(defaultPhases);
   const [dataByIcon, setDataByIcon] = useState<DataStore>({});
-  const [errorByIcon, setErrorByIcon] = useState<
-    Partial<Record<IconId, string>>
-  >({});
 
   useEffect(() => {
+    if (loading) return;
     const timer = window.setTimeout(() => setDashboardReady(true), 1000);
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [loading]);
 
   useEffect(() => {
     if (dashboardReady) {
@@ -200,17 +201,12 @@ function AssessmentDashboard({
     }
   }, [dashboardReady]);
 
-  const selectedData = useMemo(
-    () => dataByIcon[selectedIcon] ?? [],
-    [dataByIcon, selectedIcon],
-  );
-  const selectedPhase = loadingPhases[selectedIcon];
+  const showSkeleton = loading || !dashboardReady;
 
   async function hydrateIconData(iconId: IconId): Promise<void> {
     if (loadingPhases[iconId] !== "idle") return;
 
     setLoadingPhases((prev) => ({ ...prev, [iconId]: "loading" }));
-    setErrorByIcon((prev) => ({ ...prev, [iconId]: undefined }));
 
     const target = iconDefinitions.find((item) => item.id === iconId);
     if (!target) return;
@@ -230,10 +226,6 @@ function AssessmentDashboard({
       }, 680);
     } catch {
       setLoadingPhases((prev) => ({ ...prev, [iconId]: "idle" }));
-      setErrorByIcon((prev) => ({
-        ...prev,
-        [iconId]: "Could not fetch this section right now.",
-      }));
     }
   }
 
@@ -245,7 +237,7 @@ function AssessmentDashboard({
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#070d1e] px-3 pt-3 text-white lg:px-4 lg:pt-4">
+    <main className="relative min-h-screen overflow-hidden bg-[#070d1e] px-2 pt-2 text-white sm:px-3 sm:pt-3 lg:px-4 lg:pt-4">
       <div className="absolute inset-0 left-[30%] top-0 right-0 bottom-0" />
       <svg
         className="pointer-events-none absolute inset-0 h-full w-full"
@@ -315,91 +307,90 @@ function AssessmentDashboard({
       </svg>
       <div className="pointer-events-none absolute inset-y-0 right-[11%] w-[230px] " />
 
-      <section className="relative mx-auto flex min-h-screen w-full max-w-[1680px] flex-col overflow-hidden rounded-[22px] border border-blue-100/20 bg-white/[0.03] px-6 pb-6 pt-8 backdrop-blur-md lg:px-12">
+      <section className="relative mx-auto flex min-h-screen w-full max-w-[1680px] flex-col overflow-hidden rounded-[18px] border border-blue-100/20 bg-white/[0.03] px-3 pb-4 pt-5 backdrop-blur-md sm:px-5 sm:pb-5 sm:pt-6 lg:rounded-[22px] lg:px-12 lg:pb-6 lg:pt-8">
         <div className="pointer-events-none absolute inset-0 rounded-[22px] shadow-[inset_0_0_0_1px_rgba(125,182,255,0.15)]" />
 
-        <div className="relative h-[440px] w-full">
-          <div className="pointer-events-none absolute left-1/2 top-[50%] h-[290px] w-[290px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(78,140,255,0.2)_0%,rgba(54,119,255,0.12)_35%,transparent_68%)] blur-[6px]" />
-          <img
-            src="/src/public/image.gif"
-            alt="Animated ring"
-            className="pointer-events-none absolute left-1/2 top-[50%] h-[290px] w-[290px] -translate-x-1/2 -translate-y-1/2 object-contain mix-blend-screen opacity-68 [filter:brightness(2.35)_contrast(2.05)_saturate(1.45)] [clip-path:circle(37%_at_50%_50%)]"
-          />
-          <div className="honeycomb" style={{ left: "18%", top: "18%" }}>
-            <HoneycombIcon>
-              <svg
-                width="22"
-                height="25"
-                viewBox="0 0 22 25"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M15.5168 13.4628C15.9227 13.3178 16.1953 12.9302 16.1953 12.4993C16.1953 12.0684 15.9227 11.6808 15.5185 11.5358L13.6598 10.8657C12.7556 10.5413 11.9344 10.0208 11.2551 9.34146C10.5758 8.66216 10.0552 7.84092 9.73083 6.93668L9.06072 5.07802C8.98901 4.88029 8.85831 4.70934 8.68629 4.58829C8.51427 4.46725 8.30922 4.40196 8.09888 4.40124C7.66881 4.40124 7.28125 4.67296 7.13455 5.07802L6.46527 6.93668C6.14094 7.84109 5.62034 8.66247 4.94087 9.34179C4.2614 10.0211 3.43992 10.5415 2.53543 10.8657L0.678449 11.5358C0.272547 11.6817 0 12.0684 0 12.4993C0 12.9302 0.272547 13.3169 0.676783 13.4628L2.53543 14.1329C3.43974 14.4572 4.26103 14.9777 4.94034 15.657C5.61966 16.3363 6.14014 17.1576 6.46444 18.0619L7.13455 19.9214C7.28041 20.3256 7.66798 20.5973 8.09805 20.5973C8.52812 20.5973 8.91569 20.3248 9.06072 19.9206L9.73083 18.0619C10.0552 17.1577 10.5758 16.3364 11.2551 15.6571C11.9344 14.9778 12.7556 14.4573 13.6598 14.1329L15.5168 13.4628ZM12.6563 5.38391L13.5973 5.72313C13.9982 5.86698 14.3623 6.09776 14.6635 6.39894C14.9647 6.70011 15.1954 7.0642 15.3393 7.4651L15.6777 8.40526C15.8102 8.77366 16.1619 9.0212 16.5528 9.0212C16.9437 9.0212 17.2963 8.77366 17.428 8.40609L17.7672 7.4651C17.9109 7.06412 18.1416 6.69994 18.4428 6.39875C18.744 6.09756 19.1082 5.86682 19.5092 5.72313L20.451 5.38391C20.8169 5.25139 21.0644 4.90049 21.0653 4.51126C21.0661 4.12203 20.8211 3.76947 20.451 3.63444L19.5092 3.29522C19.1083 3.15127 18.7443 2.92045 18.4431 2.61929C18.142 2.31814 17.9111 1.9541 17.7672 1.55326L17.428 0.612261C17.3626 0.432802 17.2436 0.277798 17.0871 0.168273C16.9306 0.0587468 16.7442 0 16.5532 0C16.3622 0 16.1759 0.0587468 16.0194 0.168273C15.8629 0.277798 15.7439 0.432802 15.6785 0.612261L15.3393 1.55326C15.1954 1.95415 14.9647 2.31825 14.6635 2.61942C14.3623 2.92059 13.9982 3.15138 13.5973 3.29522L12.6538 3.63528C12.2871 3.76863 12.0404 4.12119 12.0412 4.51126C12.0421 4.90133 12.2896 5.25222 12.6563 5.38391ZM20.4502 19.6147L19.5092 19.2754C19.1083 19.1315 18.7443 18.9007 18.4431 18.5995C18.142 18.2984 17.9111 17.9343 17.7672 17.5335L17.428 16.5925C17.3624 16.4131 17.2433 16.2582 17.0867 16.1488C16.9302 16.0394 16.7438 15.9807 16.5528 15.9807C16.3618 15.9807 16.1755 16.0394 16.0189 16.1488C15.8624 16.2582 15.7433 16.4131 15.6777 16.5925L15.3385 17.5335C15.1948 17.9345 14.964 18.2986 14.6628 18.5998C14.3617 18.901 13.9975 19.1318 13.5965 19.2754L12.6563 19.6138C12.2888 19.7455 12.0412 20.0973 12.0404 20.4873C12.0396 20.8774 12.2854 21.23 12.6555 21.3641L13.5965 21.7034C13.9975 21.847 14.3618 22.0776 14.663 22.3789C14.9642 22.6801 15.1949 23.0443 15.3385 23.4453L15.6768 24.3855C15.742 24.5655 15.861 24.721 16.0177 24.8309C16.1744 24.9409 16.3611 24.9999 16.5525 25C16.7439 25.0001 16.9307 24.9412 17.0875 24.8314C17.2443 24.7216 17.3635 24.5662 17.4288 24.3863L17.768 23.4453C17.912 23.0445 18.1428 22.6804 18.444 22.3793C18.7451 22.0781 19.1092 21.8473 19.51 21.7034L20.4552 21.3633C20.8211 21.2291 21.0669 20.8774 21.0661 20.4873C21.0653 20.0973 20.8169 19.7472 20.4502 19.6147Z"
-                  fill="#90909B"
-                />
-              </svg>
-            </HoneycombIcon>
-          </div>
-          {iconDefinitions.map((item) => {
-            const phase = loadingPhases[item.id];
-            const positions: Record<IconId, { x: number; y: number }> = {
-              inbox: { x: 10, y: 50 },
-              contacts: { x: 20, y: 70 },
-              employees: { x: 82, y: 18 },
-              workflows: { x: 71, y: 50 },
-              campaigns: { x: 82, y: 70 },
-            };
-            const selectedPosition = positions[item.id];
-            const baseClass = `honeycomb ${phase === "animating" ? item.destinationClass : ""}`;
+        {!showSkeleton ? (
+          <div className="relative h-[360px] w-full sm:h-[420px] lg:h-[440px]">
+            <div className="pointer-events-none absolute left-1/2 top-[50%] h-[220px] w-[220px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(78,140,255,0.2)_0%,rgba(54,119,255,0.12)_35%,transparent_68%)] blur-[6px] sm:h-[280px] sm:w-[280px] lg:h-[290px] lg:w-[290px]" />
+            <img
+              src="/src/public/image.gif"
+              alt="Animated ring"
+              className="pointer-events-none absolute left-1/2 top-[50%] h-[220px] w-[220px] -translate-x-1/2 -translate-y-1/2 object-contain mix-blend-screen opacity-68 [filter:brightness(2.35)_contrast(2.05)_saturate(1.45)] [clip-path:circle(37%_at_50%_50%)] sm:h-[280px] sm:w-[280px] lg:h-[290px] lg:w-[290px]"
+            />
+            <div className="honeycomb" style={{ left: "18%", top: "18%" }}>
+              <HoneycombIcon>
+                <svg
+                  width="22"
+                  height="25"
+                  viewBox="0 0 22 25"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M15.5168 13.4628C15.9227 13.3178 16.1953 12.9302 16.1953 12.4993C16.1953 12.0684 15.9227 11.6808 15.5185 11.5358L13.6598 10.8657C12.7556 10.5413 11.9344 10.0208 11.2551 9.34146C10.5758 8.66216 10.0552 7.84092 9.73083 6.93668L9.06072 5.07802C8.98901 4.88029 8.85831 4.70934 8.68629 4.58829C8.51427 4.46725 8.30922 4.40196 8.09888 4.40124C7.66881 4.40124 7.28125 4.67296 7.13455 5.07802L6.46527 6.93668C6.14094 7.84109 5.62034 8.66247 4.94087 9.34179C4.2614 10.0211 3.43992 10.5415 2.53543 10.8657L0.678449 11.5358C0.272547 11.6817 0 12.0684 0 12.4993C0 12.9302 0.272547 13.3169 0.676783 13.4628L2.53543 14.1329C3.43974 14.4572 4.26103 14.9777 4.94034 15.657C5.61966 16.3363 6.14014 17.1576 6.46444 18.0619L7.13455 19.9214C7.28041 20.3256 7.66798 20.5973 8.09805 20.5973C8.52812 20.5973 8.91569 20.3248 9.06072 19.9206L9.73083 18.0619C10.0552 17.1577 10.5758 16.3364 11.2551 15.6571C11.9344 14.9778 12.7556 14.4573 13.6598 14.1329L15.5168 13.4628ZM12.6563 5.38391L13.5973 5.72313C13.9982 5.86698 14.3623 6.09776 14.6635 6.39894C14.9647 6.70011 15.1954 7.0642 15.3393 7.4651L15.6777 8.40526C15.8102 8.77366 16.1619 9.0212 16.5528 9.0212C16.9437 9.0212 17.2963 8.77366 17.428 8.40609L17.7672 7.4651C17.9109 7.06412 18.1416 6.69994 18.4428 6.39875C18.744 6.09756 19.1082 5.86682 19.5092 5.72313L20.451 5.38391C20.8169 5.25139 21.0644 4.90049 21.0653 4.51126C21.0661 4.12203 20.8211 3.76947 20.451 3.63444L19.5092 3.29522C19.1083 3.15127 18.7443 2.92045 18.4431 2.61929C18.142 2.31814 17.9111 1.9541 17.7672 1.55326L17.428 0.612261C17.3626 0.432802 17.2436 0.277798 17.0871 0.168273C16.9306 0.0587468 16.7442 0 16.5532 0C16.3622 0 16.1759 0.0587468 16.0194 0.168273C15.8629 0.277798 15.7439 0.432802 15.6785 0.612261L15.3393 1.55326C15.1954 1.95415 14.9647 2.31825 14.6635 2.61942C14.3623 2.92059 13.9982 3.15138 13.5973 3.29522L12.6538 3.63528C12.2871 3.76863 12.0404 4.12119 12.0412 4.51126C12.0421 4.90133 12.2896 5.25222 12.6563 5.38391ZM20.4502 19.6147L19.5092 19.2754C19.1083 19.1315 18.7443 18.9007 18.4431 18.5995C18.142 18.2984 17.9111 17.9343 17.7672 17.5335L17.428 16.5925C17.3624 16.4131 17.2433 16.2582 17.0867 16.1488C16.9302 16.0394 16.7438 15.9807 16.5528 15.9807C16.3618 15.9807 16.1755 16.0394 16.0189 16.1488C15.8624 16.2582 15.7433 16.4131 15.6777 16.5925L15.3385 17.5335C15.1948 17.9345 14.964 18.2986 14.6628 18.5998C14.3617 18.901 13.9975 19.1318 13.5965 19.2754L12.6563 19.6138C12.2888 19.7455 12.0412 20.0973 12.0404 20.4873C12.0396 20.8774 12.2854 21.23 12.6555 21.3641L13.5965 21.7034C13.9975 21.847 14.3618 22.0776 14.663 22.3789C14.9642 22.6801 15.1949 23.0443 15.3385 23.4453L15.6768 24.3855C15.742 24.5655 15.861 24.721 16.0177 24.8309C16.1744 24.9409 16.3611 24.9999 16.5525 25C16.7439 25.0001 16.9307 24.9412 17.0875 24.8314C17.2443 24.7216 17.3635 24.5662 17.4288 24.3863L17.768 23.4453C17.912 23.0445 18.1428 22.6804 18.444 22.3793C18.7451 22.0781 19.1092 21.8473 19.51 21.7034L20.4552 21.3633C20.8211 21.2291 21.0669 20.8774 21.0661 20.4873C21.0653 20.0973 20.8169 19.7472 20.4502 19.6147Z"
+                    fill="#90909B"
+                  />
+                </svg>
+              </HoneycombIcon>
+            </div>
+            {iconDefinitions.map((item) => {
+              const phase = loadingPhases[item.id];
+              const positions: Record<IconId, { x: number; y: number }> = {
+                inbox: { x: 10, y: 50 },
+                contacts: { x: 20, y: 70 },
+                employees: { x: 82, y: 18 },
+                workflows: { x: 71, y: 50 },
+                campaigns: { x: 82, y: 70 },
+              };
+              const selectedPosition = positions[item.id];
+              const baseClass = `honeycomb ${phase === "animating" ? item.destinationClass : ""}`;
 
-            return (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => onSelectIcon(item.id)}
-                className={baseClass}
-                style={{
-                  left: `${selectedPosition.x}%`,
-                  top: `${selectedPosition.y}%`,
-                }}
-              >
-                <HoneycombIcon>
-                  {phase === "loading" ? (
-                    <LoaderCircle className="h-5 w-5 animate-spin" />
-                  ) : (
-                    item.iconSvg
-                  )}
-                </HoneycombIcon>
-              </button>
-            );
-          })}
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => onSelectIcon(item.id)}
+                  className={baseClass}
+                  style={{
+                    left: `${selectedPosition.x}%`,
+                    top: `${selectedPosition.y}%`,
+                  }}
+                >
+                  <HoneycombIcon>
+                    {phase === "loading" ? (
+                      <LoaderCircle className="h-5 w-5 animate-spin" />
+                    ) : (
+                      item.iconSvg
+                    )}
+                  </HoneycombIcon>
+                </button>
+              );
+            })}
 
-          <div className="pointer-events-none absolute inset-x-0 top-[84%] -translate-y-1/2">
-            <h1 className="text-center text-[46px] font-semibold tracking-[-0.04em] text-white/95">
-              Extracting Information...
-            </h1>
-            <p className="mx-auto mt-3 max-w-[560px] text-center text-[13px] leading-[1.35] text-blue-100/80">
-              We are extracting information from the above honey combs to your
-              system
-            </p>
+            <div className="pointer-events-none absolute inset-x-0 top-[84%] -translate-y-1/2">
+              <h1 className="text-center text-2xl font-semibold tracking-[-0.03em] text-white/95 sm:text-4xl lg:text-[46px] lg:tracking-[-0.04em]">
+                Extracting Information...
+              </h1>
+              <p className="mx-auto mt-2 max-w-[560px] px-4 text-center text-xs leading-[1.35] text-blue-100/80 sm:mt-3 sm:text-[13px]">
+                We are extracting information from the above honey combs to your
+                system
+              </p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <HeroSkeleton />
+        )}
 
         <button
           type="button"
           onClick={onOpenNextPage}
-          className="mt-5 flex-1 rounded-2xl border border-blue-100/20 bg-white/95 p-4 text-left text-slate-800 shadow-2xl shadow-blue-950/30 transition hover:scale-[1.01] hover:border-blue-300/40"
+          className="mt-4 flex-1 rounded-2xl border border-blue-100/20 bg-white/95 p-3 text-left text-slate-800 shadow-2xl shadow-blue-950/30 transition hover:scale-[1.01] hover:border-blue-300/40 sm:mt-5 sm:p-4"
         >
-          {!dashboardReady ? (
+          {showSkeleton ? (
             <SkeletonPanel />
           ) : (
-            <LivePanel
-              selectedIcon={selectedIcon}
-              selectedPhase={selectedPhase}
-              selectedData={selectedData}
-              error={errorByIcon[selectedIcon]}
-            />
+            <LivePanel />
           )}
         </button>
       </section>
@@ -407,11 +398,29 @@ function AssessmentDashboard({
   );
 }
 
+function HeroSkeleton() {
+  return (
+    <div className="relative h-[360px] w-full animate-pulse sm:h-[420px] lg:h-[440px]">
+      <Skeleton className="absolute left-1/2 top-[44%] h-[220px] w-[220px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-100/20 sm:h-[280px] sm:w-[280px] lg:h-[290px] lg:w-[290px]" />
+      <Skeleton className="absolute left-[18%] top-[18%] h-16 w-16 rounded-2xl bg-blue-100/20" />
+      <Skeleton className="absolute left-[10%] top-[50%] h-16 w-16 rounded-2xl bg-blue-100/20" />
+      <Skeleton className="absolute left-[20%] top-[70%] h-16 w-16 rounded-2xl bg-blue-100/20" />
+      <Skeleton className="absolute left-[82%] top-[18%] h-16 w-16 -translate-x-full rounded-2xl bg-blue-100/20" />
+      <Skeleton className="absolute left-[71%] top-[50%] h-16 w-16 -translate-x-1/2 rounded-2xl bg-blue-100/20" />
+      <Skeleton className="absolute left-[82%] top-[70%] h-16 w-16 -translate-x-full rounded-2xl bg-blue-100/20" />
+      <div className="absolute inset-x-0 top-[84%] -translate-y-1/2 px-4">
+        <Skeleton className="mx-auto h-9 w-full max-w-[460px] rounded-xl bg-blue-100/20" />
+        <Skeleton className="mx-auto mt-3 h-4 w-full max-w-[320px] rounded-xl bg-blue-100/20" />
+      </div>
+    </div>
+  );
+}
+
 function SkeletonPanel() {
   return (
-    <div className="space-y-2 animate-pulse">
+      <div className="space-y-2 animate-pulse">
       <div className="h-9 w-full rounded-md bg-slate-200" />
-      <div className="grid h-[360px] grid-cols-[14%_21%_43%_22%] gap-0 overflow-hidden rounded-md border border-slate-200">
+      <div className="grid h-[240px] grid-cols-1 gap-2 overflow-hidden rounded-md border border-slate-200 sm:h-[320px] sm:grid-cols-[14%_21%_43%_22%] sm:gap-0 lg:h-[360px]">
         <div className="border-r border-slate-200 bg-slate-100" />
         <div className="border-r border-slate-200 bg-slate-100" />
         <div className="border-r border-slate-200 bg-slate-100" />
@@ -421,37 +430,12 @@ function SkeletonPanel() {
   );
 }
 
-function LivePanel({
-  selectedIcon,
-  selectedPhase,
-  selectedData,
-  error,
-}: {
-  selectedIcon: IconId;
-  selectedPhase: LoadingPhase;
-  selectedData: unknown[];
-  error?: string;
-}) {
+function LivePanel() {
   return (
     <div className="h-full">
-      <img src="/src/assets/dashboard.PNG" alt="" />
+      <img src="/src/assets/dashboard.PNG" alt="" className="h-full w-full rounded-lg object-cover object-top" />
     </div>
   );
-}
-
-function pickDisplayText(
-  item: Record<string, unknown>,
-  preferredField: string,
-): string {
-  const direct = item[preferredField];
-  if (typeof direct === "string") return direct;
-
-  const fallbackFields = ["name", "title", "email", "body", "firstName"];
-  for (const key of fallbackFields) {
-    const value = item[key];
-    if (typeof value === "string") return value;
-  }
-  return "Loaded record";
 }
 
 function normalizeApiPayload(

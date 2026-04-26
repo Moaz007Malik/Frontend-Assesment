@@ -2,12 +2,6 @@ import { useRef, useState, type ChangeEvent, type KeyboardEvent } from 'react';
 import { Message, Conversation } from '../api/dummyApi';
 import { Skeleton } from './Skeleton';
 
-const CheckmarkIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M2 6L5 9L10 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
 const DotsIcon = () => (
   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle cx="9" cy="3" r="1.5" fill="currentColor" />
@@ -23,47 +17,6 @@ const Download = () => (
 
 );
 
-const SendIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M2 8L14 2L8 14L6.5 9.5L2 8Z" fill="currentColor" />
-  </svg>
-);
-
-const PaperclipIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M3 8V12C3 13.66 4.34 15 6 15H12C13.66 15 15 13.66 15 12V6C15 4.34 13.66 3 12 3C11.4 3 10.84 3.16 10.35 3.44M3 8L10.5 0.5C10.89 0.11 11.51 0.11 11.9 0.5L13.32 1.92C13.71 2.31 13.71 2.93 13.32 3.32L6 10.64" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const SmileIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="8" cy="8" r="7" stroke="currentColor" strokeWidth="1.2" />
-    <circle cx="5.5" cy="6.5" r="1" fill="currentColor" />
-    <circle cx="10.5" cy="6.5" r="1" fill="currentColor" />
-    <path d="M5 11C6 12 7 12.5 8 12.5C9 12.5 10 12 11 11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-  </svg>
-);
-
-const ImageIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="2" y="2" width="12" height="12" rx="1" stroke="currentColor" strokeWidth="1.2" />
-    <circle cx="5" cy="5" r="1.5" fill="currentColor" />
-    <path d="M2 10L5 7L9 11L14 6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const LocationIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M8 1C5.24 1 3 3.24 3 6C3 9.5 8 15 8 15S13 9.5 13 6C13 3.24 10.76 1 8 1ZM8 8C6.9 8 6 7.1 6 6C6 4.9 6.9 4 8 4C9.1 4 10 4.9 10 6C10 7.1 9.1 8 8 8Z" fill="currentColor" />
-  </svg>
-);
-
-const MicIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M8 11C9.66 11 11 9.66 11 8V3C11 1.34 9.66 0 8 0C6.34 0 5 1.34 5 3V8C5 9.66 6.34 11 8 11ZM13.3 8C13.3 10.46 11.3 12.46 8.84 12.46C6.38 12.46 4.38 10.46 4.38 8H3C3 11.53 5.61 14.5 9 14.9V16H7V14.9C10.39 14.5 13 11.53 13 8H13.3Z" fill="currentColor" />
-  </svg>
-);
-
 const Darktheme = () => (
 <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M12.0241 7.75251C11.9164 7.72548 11.8087 7.75251 11.7145 7.82009C11.3645 8.11746 10.9607 8.36076 10.5165 8.52296C10.0993 8.68516 9.64161 8.76626 9.15704 8.76626C8.06676 8.76626 7.0707 8.32021 6.35731 7.60383C5.64392 6.88744 5.19973 5.88721 5.19973 4.79236C5.19973 4.3328 5.28049 3.88675 5.41509 3.48125C5.56316 3.04871 5.77852 2.65673 6.06118 2.31881C6.18233 2.17013 6.15541 1.95386 6.00734 1.83221C5.91312 1.76463 5.80544 1.7376 5.69776 1.76463C4.55364 2.07551 3.55758 2.76486 2.84419 3.684C2.15771 4.58961 1.75391 5.7115 1.75391 6.92799C1.75391 8.40131 2.34616 9.73946 3.31529 10.7127C4.28443 11.6859 5.60354 12.2806 7.08416 12.2806C8.3225 12.2806 9.46663 11.8481 10.3819 11.1317C11.3107 10.4018 11.9837 9.36099 12.2664 8.17153C12.3202 7.98229 12.2125 7.79306 12.0241 7.75251Z" fill="black"/>
@@ -77,23 +30,16 @@ function ChatBubble({
   sender,
   text,
   time,
-  status,
 }: {
   sender: 'me' | 'them';
   text: string;
   time: string;
-  status?: string;
 }) {
   const isMe = sender === 'me';
 
   return (
     <div className={`flex w-full ${isMe ? 'justify-end' : 'justify-start'}`}>
-      
-      {/* Message container */}
-      
       <div className={`flex  gap-2 max-w-[75%] ${isMe ? 'flex-row-reverse' : ''}`}>
-        
-        {/* Bubble */}
         <div
           className={`
             px-4 py-3 text-sm leading-6
@@ -104,8 +50,6 @@ function ChatBubble({
         >
           <p>{text}</p>
         </div>
-
-        {/* Time + status */}
         <div className="flex flex-col text-[10px] text-slate-400 items-center">
           <span>{time}</span>
 
@@ -175,7 +119,7 @@ function ChatWindow({ loading = false, contact, messages, onSendMessage }: ChatW
 
   if (loading) {
     return (
-      <section className="rounded-[7px] bg-white p-6 shadow-soft">
+      <section className="rounded-[7px] bg-white p-4 shadow-soft sm:p-6">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div>
             <Skeleton className="h-4 w-44 mb-3" />
@@ -211,8 +155,8 @@ function ChatWindow({ loading = false, contact, messages, onSendMessage }: ChatW
   }
 
   return (
-    <section className="max-h-[900px] rounded-[7px] bg-white  shadow-soft flex flex-col">
-      <div className="mb-6 flex flex-wrap items-center p-[21px] justify-between gap-4 border-b border-slate-200 pb-5">
+    <section className="max-h-[75vh] rounded-[7px] bg-white shadow-soft flex flex-col xl:max-h-[900px]">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 p-4 pb-4 sm:mb-6 sm:gap-4 sm:p-[21px] sm:pb-5">
         <div>
           <div className="text-lg font-semibold tracking-tight text-slate-900">{contact?.name ?? 'Loading...'}</div>
         
@@ -230,22 +174,21 @@ function ChatWindow({ loading = false, contact, messages, onSendMessage }: ChatW
         </div>
       </div>
 
-      <div className="mb-6 flex px-6  justify-center">
+      <div className="mb-4 flex justify-center px-4 sm:mb-6 sm:px-6">
         <span className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-600 shadow-sm">28 August 2025</span>
       </div>
 
-      <div className="mb-6 flex-1  px-6 overflow-auto pr-2 scrollbar-thin">
+      <div className="mb-4 flex-1 overflow-auto px-4 pr-1 scrollbar-thin sm:mb-6 sm:px-6 sm:pr-2">
         <div className="flex flex-col gap-4">
           {messages.map((message) => (
-            <ChatBubble key={message.id} sender={message.sender} text={message.text} time={message.time} status={message.status} />
+            <ChatBubble key={message.id} sender={message.sender} text={message.text} time={message.time} />
           ))}
         </div>
         <div ref={messagesEndRef} />
       </div>
 
-<div className="rounded-[10px] border  m-6 shadow bg-[#fff] px-4 py-3">
-  {/* Top Input */}
-  <div className="flex items-center mt-[15px] mb-[15px] gap-3">
+<div className="m-3 rounded-[10px] border bg-[#fff] px-3 py-3 shadow sm:m-6 sm:px-4">
+  <div className="mb-3 mt-2 flex items-center gap-2 sm:mb-[15px] sm:mt-[15px] sm:gap-3">
     <input
       ref={fileInputRef}
       type="file"
@@ -270,10 +213,8 @@ function ChatWindow({ loading = false, contact, messages, onSendMessage }: ChatW
     />
   </div>
 
-  {/* Bottom Icons Row */}
-  <div className="mt-3 flex items-center justify-between">
-    {/* Left Icons */}
-    <div className="flex items-center gap-3 text-slate-500">
+  <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+    <div className="flex items-center gap-2 text-slate-500 sm:gap-3">
       <button onClick={() => fileInputRef.current?.click()}>
         <svg width="22" height="22" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M6.24758 5.66253C5.98652 5.92352 5.63252 6.07019 5.26339 6.07019C4.89426 6.07019 4.54025 5.92352 4.27923 5.66253C4.01822 5.40151 3.87158 5.0475 3.87158 4.67837C3.87158 4.30924 4.01822 3.95523 4.27923 3.69421C4.54025 3.43319 4.89426 3.28656 5.26339 3.28656C5.63252 3.28656 5.98652 3.43319 6.24758 3.69421C6.50857 3.95523 6.65518 4.30924 6.65518 4.67837C6.65518 5.0475 6.50857 5.40151 6.24758 5.66253Z" fill="black"/>
@@ -310,8 +251,7 @@ function ChatWindow({ loading = false, contact, messages, onSendMessage }: ChatW
       </button>
     </div>
 
-    {/* Right Icons */}
-    <div className="flex items-center gap-3 text-slate-600">
+    <div className="flex items-center gap-2 text-slate-600 sm:gap-3">
       <button>
       <svg width="20" height="20" viewBox="0 0 9 11" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M5.07579 2.30793L1.82877 5.55491H3.18304C3.64824 5.55491 3.98415 6.00023 3.85637 6.4476L3.35041 8.21836L6.59743 4.97134H5.24316C4.77795 4.97134 4.44205 4.52608 4.56982 4.07871L5.07579 2.30793ZM5.52444 0.208683C6.03538 -0.302276 6.89146 0.201449 6.69298 0.896239L5.8621 3.80424H7.7245C8.34836 3.80424 8.66082 4.55854 8.21971 4.99971L2.90175 10.3177C2.39079 10.8286 1.53472 10.3249 1.73324 9.63006L2.5641 6.72205H0.701683C0.077806 6.72205 -0.234645 5.96778 0.206513 5.52661L5.52444 0.208683Z" fill="black"/>

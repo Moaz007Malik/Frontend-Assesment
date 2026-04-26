@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FiChevronDown, FiMail, FiUser, FiUsers, FiPlus, FiMessageSquare, FiPlus as FiAddIcon } from 'react-icons/fi';
+import { FiChevronDown, FiPlus } from 'react-icons/fi';
 import {
   Channel,
   ChannelProfile,
@@ -67,7 +67,7 @@ function DetailsPanel({ loading = false, contactId, activeFilter, channels, onCh
 
     setLabels((prev) => [...prev, labelInput.trim()]);
     setLabelInput('');
-    setShowLabelInput(false); // hide after add
+    setShowLabelInput(false);
   };
 
   const handleLabelKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -95,7 +95,7 @@ function DetailsPanel({ loading = false, contactId, activeFilter, channels, onCh
   };
   if (loading) {
     return (
-      <aside className="h-full min-h-0 rounded-[32px] bg-white p-6 shadow-soft overflow-hidden">
+      <aside className="h-full min-h-0 rounded-[20px] bg-white p-4 shadow-soft overflow-hidden sm:rounded-[32px] sm:p-6">
         <div className="mb-6 flex items-center justify-between">
           <div>
             <Skeleton className="h-4 w-24 mb-3" />
@@ -120,8 +120,8 @@ function DetailsPanel({ loading = false, contactId, activeFilter, channels, onCh
   }
 
   return (
-    <aside className="h-full min-h-0 rounded-[7px] bg-white shadow-soft overflow-hidden">
-      <div className="mb-6 flex items-center justify-between border-b border-slate-200 p-[21px]">
+    <aside className="max-h-[70vh] min-h-0 overflow-hidden rounded-[7px] bg-white shadow-soft xl:max-h-none">
+      <div className="mb-4 flex items-center justify-between border-b border-slate-200 p-4 sm:mb-6 sm:p-[21px]">
         <div className="text-lg font-semibold tracking-tight text-slate-900">
           Details
         </div>
@@ -130,7 +130,7 @@ function DetailsPanel({ loading = false, contactId, activeFilter, channels, onCh
         </svg>
       </div>
 
-      <div className="h-full min-h-0 overflow-auto space-y-4 pb-6">
+      <div className="h-full min-h-0 overflow-auto space-y-4 pb-4 sm:pb-6">
           <section className=" border-b border-slate-200">
             <button
               onClick={() => toggleSection('chatData')}
@@ -250,7 +250,6 @@ function DetailsPanel({ loading = false, contactId, activeFilter, channels, onCh
   {openSections.labels && (
     <div className="px-5 py-4 space-y-3">
 
-      {/* Labels */}
       <div className="flex flex-wrap gap-2">
         {labels.map((label) => (
           <span
@@ -265,7 +264,6 @@ function DetailsPanel({ loading = false, contactId, activeFilter, channels, onCh
         ))}
       </div>
 
-      {/* Input (only show when clicking +) */}
       {showLabelInput && (
         <input
           value={labelInput}
@@ -277,7 +275,6 @@ function DetailsPanel({ loading = false, contactId, activeFilter, channels, onCh
         />
       )}
 
-      {/* Add button */}
       <button
         onClick={() => setShowLabelInput(true)}
         className="inline-flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#4338ca] text-[#4338ca]"

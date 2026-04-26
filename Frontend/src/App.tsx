@@ -176,14 +176,14 @@ function App() {
   };
 
   if (page === 'assessment') {
-    return <AssessmentDashboard onOpenNextPage={() => setPage('chat')} />;
+    return <AssessmentDashboard loading={loading} onOpenNextPage={() => setPage('chat')} />;
   }
 
   return (
     <div className="bg-[#eff3fa]">
-      <section className="min-h-screen p-4 sm:p-6">
+      <section className="min-h-screen p-2 sm:p-4 lg:p-6">
         <Navbar loading={loading} />
-        <div className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-full grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-[280px_minmax(0,1fr)] xl:grid-cols-[280px_320px_minmax(0,1fr)_320px]">
+        <div className="mx-auto grid min-h-[calc(100vh-2rem)] max-w-full grid-cols-1 gap-3 lg:grid-cols-[280px_minmax(0,1fr)] xl:grid-cols-[280px_320px_minmax(0,1fr)_320px]">
           <Sidebar
             loading={loading}
             contacts={contacts}
@@ -203,8 +203,12 @@ function App() {
             activeInbox={activeInbox}
             activeFilter={activeFilter}
           />
-          <ChatWindow loading={chatLoading} contact={activeConversation} messages={chatMessages} onSendMessage={handleSendMessage} />
-          <DetailsPanel loading={loading} contactId={selectedContactId} activeFilter={activeFilter} channels={channels} onChannelSelect={handleChannelSelect} />
+          <div className="xl:col-auto">
+            <ChatWindow loading={chatLoading} contact={activeConversation} messages={chatMessages} onSendMessage={handleSendMessage} />
+          </div>
+          <div className="xl:block">
+            <DetailsPanel loading={loading} contactId={selectedContactId} activeFilter={activeFilter} channels={channels} onChannelSelect={handleChannelSelect} />
+          </div>
         </div>
       </section>
     </div>
