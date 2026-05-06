@@ -84,7 +84,7 @@ function ChatList({ loading = false, contacts, channels, selectedContactId, onCo
 
   if (loading) {
     return (
-      <section className="rounded-[20px] bg-white p-4 shadow-soft sm:rounded-[32px] sm:p-6">
+      <section className="rounded-[32px] bg-white p-6 shadow-soft">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div>
             <Skeleton className="h-8 w-48 mb-3" />
@@ -109,18 +109,27 @@ function ChatList({ loading = false, contacts, channels, selectedContactId, onCo
   }
 
  return (
-  <section className="max-h-[70vh] overflow-auto bg-white shadow-soft scrollbar-thin xl:max-h-none">
-    <div className="mb-4 flex items-center justify-between gap-3 border-b border-slate-200 p-4 pb-4 sm:mb-6 sm:p-[21px] sm:pb-5">
+  <section className=" h-full min-h-0 bg-white shadow-soft">
+
+    {/* HEADER */}
+    <div className="mb-6 flex items-center justify-between p-[21px] border-b border-slate-200 pb-5">
+
+      {/* LEFT */}
       <div className="flex items-center gap-3">
+        {/* SVG ICON */}
         <div className="flex items-center justify-center ">
 <svg width="20" height="20" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M8.77193 0C9.74085 0 10.5263 0.785465 10.5263 1.75439V8.77193C10.5263 9.74085 9.74085 10.5263 8.77193 10.5263H1.75439C0.785464 10.5263 0 9.74085 0 8.77193V1.75439C0 0.785466 0.785464 0 1.75439 0H8.77193ZM7.30994 1.16959H8.77193C9.0949 1.16959 9.35672 1.43141 9.35672 1.75439V8.77193C9.35672 9.0949 9.0949 9.35672 8.77193 9.35672H7.30994V1.16959ZM6.14035 9.35672H1.75439C1.43141 9.35672 1.16959 9.0949 1.16959 8.77193V1.75439C1.16959 1.43141 1.43141 1.16959 1.75439 1.16959H6.14035V9.35672Z" fill="black"/>
 </svg>
         </div>
+
+        {/* NAME */}
         <div>
-          <h2 className="text-base font-semibold text-slate-900 sm:text-lg">Raja AbdulRehman</h2>
+          <h2 className="text-lg font-semibold text-slate-900">Raja AbdulRehman</h2>
         </div>
       </div>
+
+      {/* RIGHT NEW MESSAGE ICON */}
       <button className="flex items-center justify-center">
        <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_2_1668)">
@@ -136,7 +145,11 @@ function ChatList({ loading = false, contacts, channels, selectedContactId, onCo
 
       </button>
     </div>
-    <div className="mb-4 flex items-center justify-between px-4 sm:mb-5 sm:px-6">
+
+    {/* SEARCH + FILTER LINE */}
+    <div className="mb-5 flex items-center px-6  justify-between">
+
+      {/* SEARCH (no bg, no border) */}
       <div className="flex items-center gap-2 flex-1">
         <FiSearch className="" />
         <input
@@ -146,6 +159,8 @@ function ChatList({ loading = false, contacts, channels, selectedContactId, onCo
           className="w-full bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
         />
       </div>
+
+      {/* FILTER ICON */}
       <button
         onClick={() => setSortNewest((prev) => !prev)}
         className="ml-3 "
@@ -157,7 +172,9 @@ function ChatList({ loading = false, contacts, channels, selectedContactId, onCo
 
       </button>
     </div>
-    <div className="mb-4 flex items-center justify-between px-4 text-sm font-medium sm:mb-5 sm:px-6">
+
+    {/* OPEN / NEWEST ROW */}
+    <div className="mb-5 flex items-center px-6 justify-between text-sm font-medium ">
       <button className="flex items-center justify-center gap-[10px] font-semibold">Open <svg width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M3.47227 4.31362C3.58194 4.42325 3.73065 4.48484 3.88572 4.48484C4.04079 4.48484 4.18951 4.42325 4.29917 4.31362L7.60736 1.00543C7.66321 0.951486 7.70776 0.886957 7.73841 0.81561C7.76906 0.744263 7.78519 0.667526 7.78587 0.589877C7.78654 0.512228 7.77174 0.435223 7.74234 0.363354C7.71294 0.291484 7.66951 0.22619 7.61461 0.171282C7.5597 0.116374 7.4944 0.0729516 7.42254 0.0435476C7.35067 0.0141435 7.27366 -0.000652666 7.19601 2.20801e-05C7.11836 0.000696827 7.04163 0.0168292 6.97028 0.0474777C6.89893 0.0781262 6.8344 0.122677 6.78046 0.178531L3.88572 3.07327L0.990983 0.178531C0.880689 0.0720058 0.732969 0.0130617 0.579638 0.0143941C0.426307 0.0157265 0.279633 0.0772287 0.171206 0.185655C0.0627809 0.29408 0.0012784 0.440754 -5.43594e-05 0.594086C-0.00138664 0.747417 0.0575576 0.895138 0.164083 1.00543L3.47227 4.31362Z" fill="black"/>
 </svg>
@@ -169,8 +186,10 @@ function ChatList({ loading = false, contacts, channels, selectedContactId, onCo
 
       </button>
     </div>
+
+    {/* FILTER TAG */}
     {activeFilter.type !== 'none' && (
-      <div className="mb-4 px-4 sm:px-6">
+      <div className="mb-4">
         <span className="rounded-full bg-[#eef2ff] px-4 py-2 text-sm font-semibold text-[#3730a3]">
           {activeFilter.type === 'team'
             ? `Team: ${activeFilter.value}`
@@ -180,7 +199,9 @@ function ChatList({ loading = false, contacts, channels, selectedContactId, onCo
         </span>
       </div>
     )}
-    <div className="space-y-2 px-3 pb-4 sm:px-4">
+
+    {/* CHAT LIST */}
+    <div className="space-y-2 px-4">
 
       {activeFilter.type === 'channel'
         ? filteredChannels.map((channel) => (

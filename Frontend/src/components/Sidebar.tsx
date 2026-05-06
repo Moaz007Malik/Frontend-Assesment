@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { FiChevronDown } from 'react-icons/fi';
+import { FiChevronDown, FiUsers, FiUser  } from 'react-icons/fi';
+import { UserCircle2,User ,CircleUserRound  } from 'lucide-react';
 import { Channel, Conversation } from '../api/dummyApi';
 import { Skeleton } from './Skeleton';
 
@@ -11,16 +12,18 @@ type SidebarProps = {
   onInboxChange: (value: string) => void;
   activeFilter: { type: 'none' | 'team' | 'user' | 'channel'; value: string };
   onFilterChange: (filter: { type: 'none' | 'team' | 'user' | 'channel'; value: string }) => void;
+  isOpen?: boolean;
+  onClose?: () => void;
 };
 
-const InboxIcon = () => (
+const InboxIcon = (props: React.SVGProps<SVGSVGElement>) => (
 <svg width="17" height="17" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M2.92398 2.33918C2.92398 1.71879 3.17043 1.12381 3.60911 0.68513C4.04779 0.246449 4.64277 0 5.26316 0C5.88355 0 6.47853 0.246449 6.91721 0.68513C7.35589 1.12381 7.60234 1.71879 7.60234 2.33918C7.60234 2.95957 7.35589 3.55455 6.91721 3.99323C6.47853 4.43191 5.88355 4.67836 5.26316 4.67836C4.64277 4.67836 4.04779 4.43191 3.60911 3.99323C3.17043 3.55455 2.92398 2.95957 2.92398 2.33918ZM2.92398 5.84795C2.14849 5.84795 1.40476 6.15601 0.856413 6.70437C0.308061 7.25272 0 7.99644 0 8.77193C0 9.23722 0.184837 9.68346 0.513848 10.0125C0.842859 10.3415 1.28909 10.5263 1.75439 10.5263H8.77193C9.23722 10.5263 9.68346 10.3415 10.0125 10.0125C10.3415 9.68346 10.5263 9.23722 10.5263 8.77193C10.5263 7.99644 10.2183 7.25272 9.6699 6.70437C9.12155 6.15601 8.37783 5.84795 7.60234 5.84795H2.92398Z" fill="black"/>
 </svg>
 
 );
 
-const UsersIcon = () => (
+const UsersIcon = (props: React.SVGProps<SVGSVGElement>) => (
  <svg width="22" height="22" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_5_497)">
 <path d="M9.35738 6.43265C10.3281 6.43265 11.1059 5.64902 11.1059 4.67826C11.1059 3.7075 10.3281 2.92387 9.35738 2.92387C8.38662 2.92387 7.60299 3.7075 7.60299 4.67826C7.60299 5.64902 8.38662 6.43265 9.35738 6.43265ZM4.67902 6.43265C5.64978 6.43265 6.42755 5.64902 6.42755 4.67826C6.42755 3.7075 5.64978 2.92387 4.67902 2.92387C3.70826 2.92387 2.92463 3.7075 2.92463 4.67826C2.92463 5.64902 3.70826 6.43265 4.67902 6.43265ZM4.67902 7.60224C3.31644 7.60224 0.585449 8.28645 0.585449 9.64902V11.111H8.77258V9.64902C8.77258 8.28645 6.04159 7.60224 4.67902 7.60224ZM9.35738 7.60224C9.18779 7.60224 8.99481 7.61393 8.79013 7.63148C9.46849 8.1227 9.94217 8.78352 9.94217 9.64902V11.111H13.4509V9.64902C13.4509 8.28645 10.72 7.60224 9.35738 7.60224Z" fill="black"/>
@@ -34,7 +37,7 @@ const UsersIcon = () => (
 
 );
 
-const UnassignedIcon = () => (
+const UnassignedIcon = (props: React.SVGProps<SVGSVGElement>) => (
 <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M7.01754 0C6.54977 0 6.09202 0.0458655 5.64875 0.133557C5.26855 0.208772 5.02131 0.577958 5.09653 0.958158C5.17174 1.33836 5.54093 1.5856 5.92113 1.51038C6.27517 1.44034 6.64171 1.40351 7.01754 1.40351C7.39338 1.40351 7.75991 1.44034 8.11396 1.51038C8.49416 1.5856 8.86334 1.33836 8.93856 0.958158C9.01377 0.577958 8.76653 0.208772 8.38634 0.133557C7.94307 0.0458655 7.48531 0 7.01754 0Z" fill="black"/>
 <path d="M10.9171 1.18242C10.595 0.966804 10.1592 1.05309 9.94356 1.37515C9.72795 1.69721 9.81424 2.13308 10.1363 2.34869C10.7488 2.75876 11.2763 3.28627 11.6864 3.89879C11.902 4.22085 12.3379 4.30714 12.6599 4.09153C12.982 3.87592 13.0683 3.44005 12.8527 3.11799C12.3405 2.35302 11.6821 1.69455 10.9171 1.18242Z" fill="black"/>
@@ -48,7 +51,7 @@ const UnassignedIcon = () => (
 
 );
 
-function Sidebar({ loading = false, contacts, channels, activeInbox, onInboxChange, activeFilter, onFilterChange }: SidebarProps) {
+function Sidebar({ loading = false, contacts, channels, activeInbox, onInboxChange, activeFilter, onFilterChange, isOpen = false, onClose }: SidebarProps) {
   const [selectedNav, setSelectedNav] = useState(activeInbox);
   const [sections, setSections] = useState({ teams: true, users: true, channels: true });
 
@@ -103,7 +106,7 @@ function Sidebar({ loading = false, contacts, channels, activeInbox, onInboxChan
 
   if (loading) {
     return (
-      <aside className="bg-[#FAFAF8] p-4 shadow-soft sm:p-6">
+      <aside className="bg-[#FAFAF8] p-6 shadow-soft">
         <div className="mb-8">
           <Skeleton className="h-9 w-28 mb-4 rounded-[18px]" />
         </div>
@@ -118,11 +121,22 @@ function Sidebar({ loading = false, contacts, channels, activeInbox, onInboxChan
   }
 
   return (
-    <aside className="max-h-[65vh] overflow-auto bg-[#FAFAF8] p-4 shadow-soft scrollbar-thin sm:max-h-none sm:p-6">
+    <>
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          onClick={onClose}
+        />
+      )}
+      <aside className={`bg-[#FAFAF8] overflow-y-scroll p-6 shadow-soft fixed left-0 top-0 h-full w-80 z-50 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:h-auto md:w-auto md:shadow-soft ${
+        isOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-slate-900 sm:text-3xl">Inbox</h1>
+        <h1 className="text-3xl font-semibold text-slate-900">Inbox</h1>
       </div>
 
+      {/* NAV */}
       <div className="space-y-3">
   {navItems.map((item) => {
   const Icon = item.icon;
@@ -157,7 +171,8 @@ function Sidebar({ loading = false, contacts, channels, activeInbox, onInboxChan
 })}
       </div>
 
-      <div className="mt-6 sm:mt-8">
+      {/* TEAMS */}
+      <div className="mt-8 ">
         <button
           onClick={() => toggleSection('teams')}
           className="mb-3 flex w-full items-center justify-between px-3 py-3 text-sm font-semibold text-slate-700"
@@ -195,7 +210,8 @@ function Sidebar({ loading = false, contacts, channels, activeInbox, onInboxChan
         )}
       </div>
 
-      <div className="mt-6 sm:mt-8">
+      {/* USERS */}
+      <div className="mt-8 ">
         <button
           onClick={() => toggleSection('users')}
           className="mb-3 flex w-full items-center justify-between px-3 py-3 text-sm font-semibold text-slate-700"
@@ -235,7 +251,8 @@ function Sidebar({ loading = false, contacts, channels, activeInbox, onInboxChan
         )}
       </div>
 
-      <div className="mt-6 sm:mt-8">
+      {/* CHANNELS (unchanged) */}
+      <div className="mt-8 ">
         <button
           onClick={() => toggleSection('channels')}
           className="mb-3 flex w-full items-center justify-between text-sm font-semibold text-slate-700"
@@ -286,6 +303,7 @@ function Sidebar({ loading = false, contacts, channels, activeInbox, onInboxChan
         )}
       </div>
     </aside>
+    </>
   );
 }
 
